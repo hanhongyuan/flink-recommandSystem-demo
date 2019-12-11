@@ -1,0 +1,19 @@
+kind: pipeline
+type: docker
+name: default
+
+
+pipeline:
+
+  build:
+    image: maven:3.6.3-jdk-8
+    commands:
+      - cd web
+      - mvn clean package -Dmaven.test.skip=true  -Ppro
+      - find /drone/src -type f -name "*.jar" | xargs -i cp {} /jar
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data1/dk/m2:/root/.m2
+      - /data1/dk/jar:/jar
